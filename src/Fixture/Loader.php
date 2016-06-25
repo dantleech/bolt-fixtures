@@ -25,11 +25,10 @@ class Loader
     public function load($contentType, $ref, array $data)
     {
         $meta = [
-            'slug'        => $slug,
             'datecreated' => date('Y-m-d H:i:s'),
-            'datepublish' => $status == 'published' ? date('Y-m-d H:i:s') : null,
             'ownerid'     => 1,
         ];
+        var_dump($this->storage);die();;
 
         $values = Arr::mergeRecursiveDistinct($data, $meta);
 

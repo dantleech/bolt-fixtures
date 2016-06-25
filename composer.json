@@ -3,10 +3,7 @@
     "description": "Fixtures for Bolt",
     "type": "bolt-extension",
     "require": {
-        "bolt/bolt": "^3.0",
-        "symfony/property-access": "^2.6",
-        "symfony/yaml": "^2.6",
-        "webmozart/assert": "^1.0"
+        "bolt/bolt": "^3.0"
     },
     "authors": [
         {
@@ -17,6 +14,11 @@
     "autoload": {
         "psr-4": {
             "DTL\\Bolt\\Extension\\Fixtures\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DTL\\Bolt\\Extension\\Fixtures\\Tests\\": "tests/"
         }
     },
     "extra": {
