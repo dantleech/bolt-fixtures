@@ -1,0 +1,26 @@
+{
+    "name": "dtl/bolt-fixtures",
+    "description": "Fixtures for Bolt",
+    "type": "bolt-extension",
+    "require": {
+        "bolt/bolt": "^3.0",
+        "symfony/property-access": "^2.6",
+        "symfony/yaml": "^2.6",
+        "webmozart/assert": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "Daniel Leech",
+            "email": "daniel@dantleech.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DTL\\Bolt\\Extension\\Fixtures\\": "src/"
+        }
+    },
+    "extra": {
+        "bolt-assets": "web",
+        "bolt-class": "DTL\\Bolt\\Extension\\Fixtures\\DtlBoltFixturesExtension"
+    }
+}
