@@ -6,7 +6,9 @@ use Bolt\Storage\EntityManager;
 use Bolt\Helpers\Arr;
 use Webmozart\Assert\Assert;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Bolt\Legacy\Content;
+use Bolt\Storage\Entity\Content;
+use Bolt\Storage\Collection\Relations;
+use Bolt\Storage\Entity\Relations as EntityRelations;
 
 class Loader
 {
@@ -19,35 +21,48 @@ class Loader
         $this->references = [];
     }
 
+    public function purge($contentType)
+    {
+        $repository = $this->storage->getRepository($contentType);
+        foreach ($repository->findAll() as $entity) {
+            $repository->delete($entity);
+        }
+    }
+
     /**
      * @var array $import
      */
     public function load($contentType, $ref, array $data)
     {
         $meta = [
+            'status' => 'published',
             'datecreated' => date('Y-m-d H:i:s'),
             'ownerid'     => 1,
         ];
-        var_dump($this->storage);die();;
 
         $values = Arr::mergeRecursiveDistinct($data, $meta);
 
-        $record = $this->storage->getEmptyContent($contentType);
+        $record = $this->storage->create($contentType, []);
+        $propertyAccessor = new PropertyAccessor();
         foreach ($values as $index => $value) {
             if (is_array($value)) {
-                $this->resolveNode($value, $record);
+                $value[$index] = $this->resolveNode($value, $record);
             }
+
+            $propertyAccessor->setValue($record, $index, $value);
+            $record->set($index, $value);
         }
 
-        $record->setValues($values);
-        $this->storage->saveContent($record);
+        $this->storage->save($record);
 
         $this->references[$contentType][$ref] = $record;
     }
 
     private function resolveNode(array $node, Content $record)
     {
-        Assert::keyExists($node, 'type');
+        if (!isset($node['type'])) {
+            return $node;
+        }
         $validTypes = [ 'reference' ];
 
         switch ($node['type']) {
@@ -89,7 +104,14 @@ class Loader
         $reference = $this->references[$nodeContentType][$nodeReference];
         $value = $accessor->getValue($reference, $node['property']);
 
-        $record->setRelation($nodeContentType, $value);
+        $relations = new Relations();
+        $newentity = new EntityRelations([
+            'from_contenttype' => $record->getContentType(),
+            'from_id'          => $record->getId(),
+            'to_contenttype'   => $nodeContentType,
+            'to_id'            => $value,
+        ]);
+        $relations->add($newentity);
+        $record->setRelation($relations);
     }
 }
-

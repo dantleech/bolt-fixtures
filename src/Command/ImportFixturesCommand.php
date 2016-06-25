@@ -38,71 +38,15 @@ class ImportFixturesCommand extends Command
 
         foreach ($data as $contentType => $records) {
             Assert::isArray($records);
+            $output->writeln(sprintf('<info>Purging:</info> %s"', $contentType));
+            $this->loader->purge($contentType);
 
             foreach ($records as $ref => $record) {
                 Assert::isArray($record);
+                $output->writeln(sprintf('  <info>Loading:</info> %s', $ref));
 
                 $this->loader->load($contentType, $ref, $record);
             }
         }
-    }
-
-    private function importPost(\DomElement $postEl)
-    {
-        $title = $postEl->evaluate('string(./sv:property[@sv:name="title"]/sv:value)');
-        $body = $postEl->evaluate('string(./sv:property[@sv:name="content"]/sv:value)');
-        $published = $postEl->evaluate('boolean(./sv:property[@sv:name="published"]/sv:value)');
-        $date = new \DateTime($postEl->evaluate('string(./sv:property[@sv:name="date"]/sv:value)'));
-
-        $tags = [];
-        foreach ($postEl->query('./sv:property[@sv:name="tags"]/sv:value') as $tagEl) {
-            $tags[] = $tagEl->nodeValue;
-        }
-
-        $values = [
-            'title' => $title,
-            'body' => $body,
-        ];
-        $meta = [
-            'slug'        => $this->slugify->slugify($title),
-            'datecreated' => $date->format('Y-m-d H:i:s'),
-            'datepublish' => $published ? $date->format('Y-m-d H:i:s') : null,
-            'ownerid'     => 1,
-            'status'      => $published ? 'published' : 'not-published'
-        ];
-
-        $values = Arr::mergeRecursiveDistinct($values, $meta);
-
-        $record = $this->storage->getEmptyContent('post');
-        $record->setValues($values);
-        $record->setDatecreated($date);
-        $record->setDatepublish($date);
-        $record->setTaxonomy('tags', $tags);
-        $this->storage->saveContent($record);
-    }
-
-    private function importPage(\DomElement $pageEl)
-    {
-        $title = $pageEl->evaluate('string(./sv:property[@sv:name="title"]/sv:value)');
-        $body = $pageEl->evaluate('string(./sv:property[@sv:name="content"]/sv:value)');
-        $published = $pageEl->evaluate('boolean(./sv:property[@sv:name="published"]/sv:value)');
-        $date = new \DateTime($pageEl->evaluate('string(./sv:property[@sv:name="date"]/sv:value)'));
-
-        $values = [
-            'title' => $title,
-            'body' => $body,
-        ];
-        $meta = [
-            'slug'        => $this->slugify->slugify($title),
-            'ownerid'     => 1,
-            'title' => $title,
-            'status'      => $published ? 'published' : 'not-published'
-        ];
-
-        $values = Arr::mergeRecursiveDistinct($values, $meta);
-
-        $record = $this->storage->getEmptyContent('page');
-        $record->setValues($values);
-        $this->storage->saveContent($record);
     }
 }
