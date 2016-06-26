@@ -1,0 +1,25 @@
+pages:
+    news1:
+        title: "Hello"
+        slug: "hello"
+        body: |
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+        image: 
+            file: "food-fruit-orange-1286.jpg"
+    news2:
+        title: "Goodbye"
+        body: |
+            In audiam vocibus interpretaris usu, et cum dicit repudiandae suscipiantur. Ad soleat definiebas vim, ne vero altera oporteat has. Noluisse constituam mei at. Ex vis albucius dissentiet, veniam ignota petentium cu eos, ad nec aeterno vocibus mediocrem. Pri mazim expetenda an, no nec nisl sensibus, has ne ignota elaboraret.
+        image:
+            file: "bell-bills-cash-register-2738.jpg"
+
+entries:
+    entry1:
+        title: Entry 1
+        slug: "entry-1"
+    entry2:
+        title: Entry 2
+        slug: "entry-2"
+    entry3:
+        title: Entry 3
+        slug: "entry-3"
