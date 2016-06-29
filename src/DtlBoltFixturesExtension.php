@@ -24,7 +24,7 @@ class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProvi
     public function register(Application $app) 
     {
         $app['dtl.fixture.loader'] = function ($app) {
-            return new Loader($app['storage']);
+            return new Loader($app['storage'], $app['slugify']);
         };
         $this->extendNutService();
     }

@@ -11,16 +11,19 @@ use Bolt\Storage\Collection\Relations;
 use Bolt\Storage\Entity\Relations as EntityRelations;
 use Bolt\Storage\Collection\Taxonomy as TaxonomyCollection;
 use Bolt\Storage\Entity\Taxonomy;
+use Cocur\Slugify\Slugify;
 
 class Loader
 {
     private $storage;
     private $references;
+    private $slugify;
 
-    public function __construct(EntityManager $storage)
+    public function __construct(EntityManager $storage, Slugify $slugify)
     {
         $this->storage = $storage;
         $this->references = [];
+        $this->slugify = $slugify;
     }
 
     public function purge($contentType)
@@ -41,6 +44,10 @@ class Loader
             'datecreated' => date('Y-m-d H:i:s'),
             'ownerid'     => 1,
         ];
+
+        if ($data['title'] && !$data['slug']) {
+            $meta['slug'] = $this->slugify->slugify($data['title']);
+        }
 
         $values = Arr::mergeRecursiveDistinct($data, $meta);
 
@@ -87,7 +94,7 @@ class Loader
         Assert::keyExists($node, 'property', 'Fixture node reference node must have "property" property');
         Assert::keyExists($node, 'contenttype', 'Fixture node reference node must have "contenttype" property');
 
-        $nodeReference = $node['reference'];
+        $nodeReferences = (array) $node['reference'];
         $nodeContentType = $node['contenttype'];
 
         if (!isset($this->references[$nodeContentType])) {
@@ -98,24 +105,27 @@ class Loader
             ));
         }
 
-        if (!isset($this->references[$nodeContentType][$nodeReference])) {
-            throw new \RuntimeException(sprintf(
-                'Unknown reference for content type "%s". Known references: "%s"',
-                $nodeContentType, $nodeReference, implode('", "', array_keys($this->references[$nodeContentType]))
-            ));
-        }
-
-        $reference = $this->references[$nodeContentType][$nodeReference];
-        $value = $accessor->getValue($reference, $node['property']);
-
         $relations = new Relations();
-        $newentity = new EntityRelations([
-            'from_contenttype' => $record->getContentType(),
-            'from_id'          => $record->getId(),
-            'to_contenttype'   => $nodeContentType,
-            'to_id'            => $value,
-        ]);
-        $relations->add($newentity);
+
+        foreach ($nodeReferences as $nodeReference) {
+            if (!isset($this->references[$nodeContentType][$nodeReference])) {
+                throw new \RuntimeException(sprintf(
+                    'Unknown reference for content type "%s". Known references: "%s"',
+                    $nodeContentType, $nodeReference, implode('", "', array_keys($this->references[$nodeContentType]))
+                ));
+            }
+
+            $reference = $this->references[$nodeContentType][$nodeReference];
+            $value = $accessor->getValue($reference, $node['property']);
+
+            $newentity = new EntityRelations([
+                'from_contenttype' => $record->getContentType(),
+                'from_id'          => $record->getId(),
+                'to_contenttype'   => $nodeContentType,
+                'to_id'            => $value,
+            ]);
+            $relations->add($newentity);
+        }
         $record->setRelation($relations);
     }
 
