@@ -9,6 +9,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Bolt\Storage\Entity\Content;
 use Bolt\Storage\Collection\Relations;
 use Bolt\Storage\Entity\Relations as EntityRelations;
+use Bolt\Storage\Collection\Taxonomy as TaxonomyCollection;
+use Bolt\Storage\Entity\Taxonomy;
 
 class Loader
 {
@@ -68,6 +70,8 @@ class Loader
         switch ($node['type']) {
             case 'reference':
                 return $this->resolveReference($node, $record);
+            case 'taxonomy':
+                return $this->resolveTaxon($node, $record);
             default:
                 throw new \RuntimeException(sprintf(
                     'Unknown reference fixture node type "%s", good types: "%s"',
@@ -113,5 +117,26 @@ class Loader
         ]);
         $relations->add($newentity);
         $record->setRelation($relations);
+    }
+
+    private function resolveTaxon(array $node, Content $record)
+    {
+        Assert::keyExists($node, 'taxons');
+        Assert::keyExists($node, 'taxonomytype');
+
+        $collection = new TaxonomyCollection();
+
+        foreach ($node['taxons'] as $value) {
+            $taxentity = new Taxonomy([
+                'name'         => $value,
+                'content_id'   => $record->getId(),
+                'contenttype'  => (string) $record->getContenttype(),
+                'taxonomytype' => $node['taxonomytype'],
+                'slug'         => $value,
+            ]);
+            $collection->add($taxentity);
+        }
+
+        $record->setTaxonomy($collection);
     }
 }
