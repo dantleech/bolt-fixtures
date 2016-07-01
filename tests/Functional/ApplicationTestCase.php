@@ -5,7 +5,7 @@ namespace DTL\Bolt\Extension\Fixtures\Tests\Functional;
 use Silex\Application;
 use DTL\Bolt\Extension\Fixtures\DtlBoltFixturesExtension;
 
-class ApplicationTestCase extends \PHPUnit_Framework_TestCase
+abstract class ApplicationTestCase extends \PHPUnit_Framework_TestCase
 {
     static $application;
 

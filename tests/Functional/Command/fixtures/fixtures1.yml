@@ -6,10 +6,9 @@ pages:
     news{1..10}:
         title: <realtext()>
         slug: "hello"
-        body: "@location1"
-        locations: [ @location1 ]
+        locations: @location1
         groups: [ one, two ]
     bastard{1..10}:
         title: <realtext()>
         slug: "hello"
-        body: "@location1"
+        body: <paragraph()>

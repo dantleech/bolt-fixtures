@@ -30,7 +30,7 @@ class ImportFixturesCommandTest extends ApplicationTestCase
         $connection = $this->getApplication()['db'];
         $stmt = $connection->query('DELETE FROM bolt_pages');
         $this->tester->execute([
-            'file' => __DIR__ . '/fixtures/fixtures1.yml'
+            'path' => __DIR__ . '/fixtures'
         ]);
 
         $stmt = $connection->query('SELECT * FROM bolt_pages ORDER BY id ASC');
