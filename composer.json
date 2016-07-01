@@ -2,8 +2,10 @@
     "name": "dtl/bolt-fixtures",
     "description": "Fixtures for Bolt",
     "type": "bolt-extension",
+    "minimum-stability": "dev",
     "require": {
-        "bolt/bolt": "^3.0"
+        "bolt/bolt": "^3.0",
+        "nelmio/alice": "^2.1"
     },
     "authors": [
         {

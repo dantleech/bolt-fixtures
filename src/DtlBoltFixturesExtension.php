@@ -3,12 +3,16 @@
 namespace DTL\Bolt\Extension\Fixtures;
 
 use Bolt\Extension\SimpleExtension;
-use DTL\Bolt\Extension\Fixtures\Command\ImportFixturesCommand;
-use DTL\Bolt\Extension\Fixtures\Fixture\Loader;
+use DTL\Bolt\Extension\Fixtures\Command\LoadFixturesCommand;
 use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\NutTrait;
 use Silex\ServiceProviderInterface;
 use Silex\Application;
+use Nelmio\Alice\Fixtures\Loader;
+use DTL\Bolt\Extension\Fixtures\Alice\Instantiator;
+use DTL\Bolt\Extension\Fixtures\Alice\ReferencePopulator;
+use DTL\Bolt\Extension\Fixtures\Alice\TaxonomyPopulator;
+use DTL\Bolt\Extension\Fixtures\Fixture\Purger;
 
 class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProviderInterface
 {
@@ -17,16 +21,24 @@ class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProvi
     public function registerNutCommands(Application $app)
     {
         return [
-            new ImportFixturesCommand($app['dtl.fixture.loader'])
+            new LoadFixturesCommand($app['dtl.fixture.loader'], $app['storage'], $app['dtl.fixture.purger'])
         ];
     }
 
     public function register(Application $app) 
     {
         $app['dtl.fixture.loader'] = function ($app) {
-            return new Loader($app['storage'], $app['slugify']);
+            $loader = new Loader();
+            $loader->addInstantiator(new Instantiator($app['storage']));
+            $loader->addPopulator(new ReferencePopulator($app['storage']));
+            $loader->addPopulator(new TaxonomyPopulator($app['storage']));
+            return $loader;
         };
-        $this->extendNutService();
+
+        $app['dtl.fixture.purger'] = function ($app) {
+            return new Purger($app['storage']);
+        };
+
     }
 
     public function boot(Application $app)
