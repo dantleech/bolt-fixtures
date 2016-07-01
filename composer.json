@@ -4,8 +4,7 @@
     "type": "bolt-extension",
     "minimum-stability": "dev",
     "require": {
-        "bolt/bolt": "^3.0",
-        "nelmio/alice": "^2.1"
+        "bolt/bolt": "^3.0"
     },
     "authors": [
         {
@@ -17,6 +16,9 @@
         "psr-4": {
             "DTL\\Bolt\\Extension\\Fixtures\\": "src/"
         }
+    },
+    "suggest": {
+        "nelmio/alice": "In order that this extension works."
     },
     "autoload-dev": {
         "psr-4": {
