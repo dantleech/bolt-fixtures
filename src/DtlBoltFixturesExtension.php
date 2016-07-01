@@ -12,7 +12,9 @@ use Nelmio\Alice\Fixtures\Loader;
 use DTL\Bolt\Extension\Fixtures\Alice\Instantiator;
 use DTL\Bolt\Extension\Fixtures\Alice\ReferencePopulator;
 use DTL\Bolt\Extension\Fixtures\Alice\TaxonomyPopulator;
+use DTL\Bolt\Extension\Fixtures\Alice\TemplateFieldsPopulator;
 use DTL\Bolt\Extension\Fixtures\Fixture\Purger;
+use DTL\Bolt\Extension\Fixtures\Alice\SlugPopulator;
 
 class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProviderInterface
 {
@@ -32,6 +34,8 @@ class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProvi
             $loader->addInstantiator(new Instantiator($app['storage']));
             $loader->addPopulator(new ReferencePopulator($app['storage']));
             $loader->addPopulator(new TaxonomyPopulator($app['storage']));
+            $loader->addPopulator(new TemplateFieldsPopulator($app['storage']));
+            $loader->addPopulator(new SlugPopulator($app['storage'], $app['slugify']));
             return $loader;
         };
 

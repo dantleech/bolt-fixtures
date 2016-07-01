@@ -35,21 +35,29 @@ class ReferencePopulator extends AbstractPopulator
         $mapping = $this->getFieldMapping($fixture->getClass(), $property);
 
         if ($mapping['data']['multiple'] === false) {
-            $values = [ $values ];
-        }
-
-        foreach ($values as $value) {
-            if (!is_object($value)) {
-                throw new \Exception(sprintf(
-                    'Invalid fixture value for "%s#%s"', $fixture->getClass(), $property
+            if (!is_object($values)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Expected single object for non-multiple relattionship for "%s/$s", got "%s"',
+                    $fixture->getClass(), $property, gettype($value)
                 ));
             }
 
+            $values = [ $values ];
+        }
+
+        if (!is_array($values)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected array for multiple relattionship for "%s/$s", got "%s"',
+                $fixture->getClass(), $property, gettype($value)
+            ));
+        }
+
+        foreach ($values as $value) {
             // hmm.. ensure we have an ID
             $this->getEntityManager()->save($value);
 
-            $newentity = new EntityRelations([
-                'from_contenttype' => $metadata->getName(),
+            $newentity = new EntityRelations($d = [
+                'from_contenttype' => (string) $metadata->getBoltName(),
                 'from_id'          => $object->getId(),
                 'to_contenttype'   => $value->getContentType(),
                 'to_id'            => $value->getId(),

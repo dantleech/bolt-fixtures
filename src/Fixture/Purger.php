@@ -18,7 +18,14 @@ class Purger
     {
         Assert::notEmpty($class);
         $repository = $this->entityManager->getRepository($class);
-        foreach ($repository->findAll() as $entity) {
+
+        $entities = $repository->findAll();
+
+        if (!$entities) {
+            return;
+        }
+
+        foreach ($entities as $entity) {
             $repository->delete($entity);
         }
     }

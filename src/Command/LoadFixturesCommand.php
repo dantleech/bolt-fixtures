@@ -17,6 +17,8 @@ use Nelmio\Alice\Fixtures\Loader;
 use DTL\Bolt\Extension\Fixtures\Alice\Instantiator;
 use Bolt\Storage\Entity\Content;
 use DTL\Bolt\Extension\Fixtures\Fixture\Purger;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Finder\Finder;
 
 class LoadFixturesCommand extends Command
 {
@@ -39,35 +41,67 @@ class LoadFixturesCommand extends Command
     public function configure()
     {
         $this->setName('dtl:fixtures:load');
-        $this->addArgument('file', InputArgument::REQUIRED);
+        $this->addArgument('path', InputArgument::REQUIRED);
+        $this->addOption('no-purge', null, InputOption::VALUE_NONE, 'Do not purge the fixture classes before loading');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $file = $input->getArgument('file');
+        $path = $input->getArgument('path');
 
-        $objects = $this->loader->load($file);
+        if (is_file($path)) {
+            $files = new \ArrayIterator([ new \SplFileInfo($path) ]);
+        } else {
+            $files = new Finder();
+            $files->in($path);
+            $files->name('*.yml');
+        }
 
-        $purged = [];
+        foreach ($files as $file) {
+            $purged = [];
+            $yaml = Yaml::parse(file_get_contents($file->getPathname()));
+            $start = microtime(true);
 
-        foreach ($objects as $object) {
-
-            if ($object instanceof Content) {
-                $class = (string) $object->getContentType();
-            } else {
-                $class = get_class($object);
-            }
-
-            if (!isset($purged[$class])) {
-                $output->writeln(sprintf('Purging "%s"', $class));
-                $this->purger->purge($class);
-                $purged[$class] = true;
+            if (false === $input->getOption('no-purge')) {
+                $output->write('<info>Purging...</>');
+                foreach (array_keys($yaml) as $class) {
+                    $output->write(sprintf(' <comment>%s</>', $class));
+                    $this->purger->purge($class);
+                    $purged[$class] = true;
+                }
             }
         }
 
+        $objects = [];
+        $output->write(PHP_EOL);
+        $output->write('<info>Loading objects...</info>');
+        foreach ($files as $file) {
+            $output->write(sprintf(' <comment>%s</>', $file->getFilename()));
+            foreach ($this->loader->load($file->getPathname()) as $object) {
+                $objects[] = $object;
+            }
+        }
+        $output->write(PHP_EOL . PHP_EOL);
+
+        $progress = 1;
+        $nbObjects = count($objects);
         foreach ($objects as $object) {
             $this->entityManager->save($object);
+
             $output->write('.');
+
+            if ($progress > 0 && $progress % 60 === 0) {
+                $output->writeln(sprintf(
+                    ' %3s / %3s (%3s%%)', $progress, $nbObjects, 
+                    floor(($progress / $nbObjects) * 100)
+                ));
+            }
+            $progress++;
         }
+        $end = microtime(true);
+
+        $output->write(PHP_EOL);
+        $output->write(PHP_EOL);
+        $output->writeln(sprintf('<info>Loaded %s fixtures in %s seconds</>', $nbObjects, number_format($end - $start, 2)));
     }
 }

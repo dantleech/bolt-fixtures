@@ -43,7 +43,7 @@ class TaxonomyPopulator extends AbstractPopulator
 
         foreach ($values as $value) {
             $taxentity = new Taxonomy([
-                'name'         => $value,
+                'name'         => $data['label'],
                 'content_id'   => $object->getId(),
                 'contenttype'  => (string) $object->getContenttype(),
                 'taxonomytype' => $data['behaves_like'],
