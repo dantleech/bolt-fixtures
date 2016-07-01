@@ -1,33 +1,40 @@
 Bolt Fixtures
 =============
 
-Simple fixture loader for bolt.
+Fixture bundle for Bolt CMS 3.0 which uses the powerful
+[Alice](https://github.com/nelmio/alice) expressive fixtures library.
 
-- Load content fixutres from YAML files.
-- Reference properties of other fixtures.
+Supports:
+
+- [Expressive fixtures](https://github.com/nelmio/alice/blob/2.x/doc/complete-reference.md)
+- [Faker](https://github.com/fzaninotto/Faker) value generation.
+- Setting taxonomy and relation fields.
 
 Example
 -------
 
 ```yaml
-pages: # the contenttype
-    homepage: # reference for this fixture
+# generate ten locations
+locations:
+    location{1..10}:
+        title: Entry <current()>
+        description: <realtext()> 
 
-        # scalar values automatically assumed to be values.
-        title: "The Awesome Homepage"
-        body: |
-            This is the body of the awesome homepage.
+user:
+    user{1..20}:
+        firstName: <firstName()>
+        lastName: <lastName()>
 
-        # references must be an array with type "reference"
-        place:
-            type: reference
-            contenttype: places
-            reference: place1
-            property: id # use the Symfony PropertyAccessor to access any field on the referenced content.
-
-places:
-    place1:
-        title: "Space"
-        body: "Space is the place"
+pages:
+    news{1..10}:
+        title: <realtext()>
+        slug: "hello"
+        body: "@location1"
+        locations: [ @location1 ]
+        groups: [ one, two ]
+    foobar{1..10}:
+        title: <realtext()>
+        slug: "hello"
+        body: "@location1"
 ```
 
