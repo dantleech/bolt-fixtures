@@ -35,7 +35,7 @@ abstract class AbstractPopulator implements MethodInterface
         if (!isset($fieldMappings[$property])) {
             throw new \InvalidArgumentException(sprintf(
                 'Field "%s" for fixture class "%s" is not mapped, mapped fields: "%s"',
-                $property, $fixture->getClass(), implode('", "', array_keys($fieldMappings))
+                $property, $class, implode('", "', array_keys($fieldMappings))
             ));
         }
 

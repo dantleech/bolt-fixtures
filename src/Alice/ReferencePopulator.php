@@ -18,7 +18,7 @@ class ReferencePopulator extends AbstractPopulator
     {
         $mapping = $this->getFieldMapping($fixture->getClass(), $property);
 
-        if ($fieldMapping['fieldtype'] == RelationType::class) {
+        if ($mapping['fieldtype'] == RelationType::class) {
             return true;
         }
 
@@ -28,14 +28,23 @@ class ReferencePopulator extends AbstractPopulator
     /**
      * {@inheritDoc}
      */
-    public function set(Fixture $fixture, $object, $property, $value)
+    public function set(Fixture $fixture, $object, $property, $values)
     {
         $relations = new Relations();
         $metadata = $this->getMetadataForClass($fixture->getClass());
+        $mapping = $this->getFieldMapping($fixture->getClass(), $property);
 
-        $values = (array) $value;
+        if ($mapping['data']['multiple'] === false) {
+            $values = [ $values ];
+        }
 
         foreach ($values as $value) {
+            if (!is_object($value)) {
+                throw new \Exception(sprintf(
+                    'Invalid fixture value for "%s#%s"', $fixture->getClass(), $property
+                ));
+            }
+
             // hmm.. ensure we have an ID
             $this->getEntityManager()->save($value);
 

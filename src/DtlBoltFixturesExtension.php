@@ -28,7 +28,7 @@ class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProvi
     public function register(Application $app) 
     {
         $app['dtl.fixture.loader'] = function ($app) {
-            $loader = new Loader();
+            $loader = new Loader('fr_FR');
             $loader->addInstantiator(new Instantiator($app['storage']));
             $loader->addPopulator(new ReferencePopulator($app['storage']));
             $loader->addPopulator(new TaxonomyPopulator($app['storage']));
@@ -39,6 +39,7 @@ class DtlBoltFixturesExtension extends AbstractExtension implements ServiceProvi
             return new Purger($app['storage']);
         };
 
+        $this->extendNutService();
     }
 
     public function boot(Application $app)

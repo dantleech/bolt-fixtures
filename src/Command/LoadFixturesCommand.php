@@ -51,6 +51,7 @@ class LoadFixturesCommand extends Command
         $purged = [];
 
         foreach ($objects as $object) {
+
             if ($object instanceof Content) {
                 $class = (string) $object->getContentType();
             } else {
@@ -62,8 +63,11 @@ class LoadFixturesCommand extends Command
                 $this->purger->purge($class);
                 $purged[$class] = true;
             }
+        }
 
+        foreach ($objects as $object) {
             $this->entityManager->save($object);
+            $output->write('.');
         }
     }
 }
