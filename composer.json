@@ -17,6 +17,10 @@
             "DTL\\Bolt\\Extension\\Fixtures\\": "src/"
         }
     },
+    "require-dev": {
+        "nelmio/alice": "^2.1",
+        "phpunit/phpunit": "^5.0"
+    },
     "suggest": {
         "nelmio/alice": "In order that this extension works."
     },

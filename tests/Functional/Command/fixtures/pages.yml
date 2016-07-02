@@ -1,0 +1,9 @@
+pages:
+    bar{1..10}:
+        title: Hello
+        slug: ~
+        body: Body Hello
+    foo{1..10}:
+        title: World
+        slug: ~
+        body: Body World

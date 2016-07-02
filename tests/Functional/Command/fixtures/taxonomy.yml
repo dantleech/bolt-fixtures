@@ -1,0 +1,5 @@
+pages:
+    page1:
+        title: Hello World
+        slug: ~
+        groups: [ one, two ]

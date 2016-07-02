@@ -33,25 +33,26 @@ class TaxonomyPopulator extends AbstractPopulator
      */
     public function set(Fixture $fixture, $object, $property, $value)
     {
-        $relations = new Relations();
         $mapping = $this->getFieldMapping($fixture->getClass(), $property);
 
         $values = (array) $value;
 
-        $collection = new TaxonomyCollection();
         $data = $mapping['data'];
 
         foreach ($values as $value) {
+            if (null === $object->getId()) {
+                $this->getEntityManager()->save($object);
+            }
+
             $taxentity = new Taxonomy([
-                'name'         => $data['label'],
+                'name'         => $value,
                 'content_id'   => $object->getId(),
                 'contenttype'  => (string) $object->getContenttype(),
-                'taxonomytype' => $data['behaves_like'],
+                'taxonomytype' => $property,
                 'slug'         => $value,
             ]);
-            $collection->add($taxentity);
-        }
 
-        $object->setTaxonomy($collection);
+            $object->getTaxonomy()->add($taxentity);
+        }
     }
 }

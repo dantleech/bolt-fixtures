@@ -30,7 +30,6 @@ class ReferencePopulator extends AbstractPopulator
      */
     public function set(Fixture $fixture, $object, $property, $values)
     {
-        $relations = new Relations();
         $metadata = $this->getMetadataForClass($fixture->getClass());
         $mapping = $this->getFieldMapping($fixture->getClass(), $property);
 
@@ -62,8 +61,7 @@ class ReferencePopulator extends AbstractPopulator
                 'to_contenttype'   => $value->getContentType(),
                 'to_id'            => $value->getId(),
             ]);
-            $relations->add($newentity);
+            $object->getRelation()->add($newentity);
         }
-        $object->setRelation($relations);
     }
 }

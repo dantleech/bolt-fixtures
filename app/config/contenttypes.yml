@@ -18,6 +18,8 @@ pages:
     relations:
         locations:
             multiple: false
+        people:
+            multiple: true
     taxonomy: [ groups ]
     recordsperpage: 100
 
@@ -32,3 +34,10 @@ locations:
         slug:
             type: slug
             uses: title
+
+people:
+    name: People
+    singular_name: Person
+    fields:
+        name: 
+            type: text

@@ -42,6 +42,7 @@ class Instantiator implements MethodInterface
             'datepublish' => date('Y-m-d H:i:s'),
             'datecreated' => date('Y-m-d H:i:s'),
             'ownerid'     => 1,
+            'slug' => null,
         ]);
     }
 }

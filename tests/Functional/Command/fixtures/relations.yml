@@ -1,0 +1,21 @@
+locations:
+    location1:
+        title: Location One
+        slug: ~
+
+people:
+    person1:
+        name: Daniel
+    person2:
+        name: Barbera
+    person3:
+        name: Dennis
+    person4:
+        name: Betty
+
+pages:
+    page1:
+        title: Hellow World
+        slug: ~
+        people: [ @person1, @person2 ]
+        locations: @location1
