@@ -54,7 +54,7 @@ class TemplateFieldsPopulator extends AbstractPopulator
         $fields = [];
         foreach ($config[$template]['fields'] as $field => $fieldData) {
             if (isset($value[$field])) {
-                $fields[$field] = $value;
+                $fields[$field] = $value[$field];
                 continue;
             }
 
