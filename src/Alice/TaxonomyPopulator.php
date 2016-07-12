@@ -44,13 +44,23 @@ class TaxonomyPopulator extends AbstractPopulator
                 $this->getEntityManager()->save($object);
             }
 
-            $taxentity = new Taxonomy([
-                'name'         => $value,
-                'content_id'   => $object->getId(),
-                'contenttype'  => (string) $object->getContenttype(),
-                'taxonomytype' => $property,
-                'slug'         => $value,
-            ]);
+            foreach ((array) $value as $atom) {
+                if ($atom instanceof Taxonomy) {
+                    continue;
+                }
+
+                if (!is_scalar($atom)) {
+                    continue;
+                }
+
+                $taxentity = new Taxonomy([
+                    'name'         => $atom,
+                    'content_id'   => $object->getId(),
+                    'contenttype'  => (string) $object->getContenttype(),
+                    'taxonomytype' => $property,
+                    'slug'         => $atom,
+                ]);
+            }
 
             $object->getTaxonomy()->add($taxentity);
         }

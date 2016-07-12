@@ -57,13 +57,20 @@ class LoadFixturesCommand extends Command
             $files->name('*.yml');
         }
 
-        foreach ($files as $file) {
-            $purged = [];
-            $yaml = Yaml::parse(file_get_contents($file->getPathname()));
-            $start = microtime(true);
+        $files = iterator_to_array($files);
 
-            if (false === $input->getOption('no-purge')) {
-                $output->write('<info>Purging...</>');
+
+        $start = microtime(true);
+        if (false === $input->getOption('no-purge')) {
+            $output->write('<info>Purging...</>');
+            foreach ($files as $file) {
+                $purged = [];
+                $yaml = Yaml::parse(file_get_contents($file->getPathname()));
+
+                if (null === $yaml) {
+                    continue;
+                }
+
                 foreach (array_keys($yaml) as $class) {
                     $output->write(sprintf(' <comment>%s</>', $class));
                     $this->purger->purge($class);
@@ -71,6 +78,8 @@ class LoadFixturesCommand extends Command
                 }
             }
         }
+
+        asort($files);
 
         $objects = [];
         $output->write(PHP_EOL);

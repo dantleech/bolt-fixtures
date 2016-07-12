@@ -36,7 +36,7 @@ class ReferencePopulator extends AbstractPopulator
         if ($mapping['data']['multiple'] === false) {
             if (!is_object($values)) {
                 throw new \InvalidArgumentException(sprintf(
-                    'Expected single object for non-multiple relattionship for "%s/$s", got "%s"',
+                    'Expected single object for non-multiple relattionship for "%s/%s", got "%s"',
                     $fixture->getClass(), $property, gettype($value)
                 ));
             }
@@ -46,7 +46,7 @@ class ReferencePopulator extends AbstractPopulator
 
         if (!is_array($values)) {
             throw new \InvalidArgumentException(sprintf(
-                'Expected array for multiple relattionship for "%s/$s", got "%s"',
+                'Expected array for multiple relattionship for "%s/%s", got "%s"',
                 $fixture->getClass(), $property, gettype($value)
             ));
         }

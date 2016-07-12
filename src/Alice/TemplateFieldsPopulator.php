@@ -47,7 +47,7 @@ class TemplateFieldsPopulator extends AbstractPopulator
         if (!isset($config[$template])) {
             throw new \InvalidArgumentException(sprintf(
                 'Template "%s" is not an available template, available templates: "%s"',
-                implode('", "', array_keys($config))
+                $template, implode('", "', array_keys($config))
             ));
         }
 
