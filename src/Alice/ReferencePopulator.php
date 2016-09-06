@@ -58,7 +58,7 @@ class ReferencePopulator extends AbstractPopulator
             $newentity = new EntityRelations($d = [
                 'from_contenttype' => (string) $metadata->getBoltName(),
                 'from_id'          => $object->getId(),
-                'to_contenttype'   => $value->getContentType(),
+                'to_contenttype'   => (string) $value->getContentType(),
                 'to_id'            => $value->getId(),
             ]);
             $object->getRelation()->add($newentity);
