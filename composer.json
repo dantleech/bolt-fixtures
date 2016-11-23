@@ -2,7 +2,6 @@
     "name": "dtl/bolt-fixtures",
     "description": "Fixtures for Bolt",
     "type": "bolt-extension",
-    "minimum-stability": "dev",
     "require": {
         "bolt/bolt": "^3.0"
     },
@@ -19,7 +18,8 @@
     },
     "require-dev": {
         "nelmio/alice": "^2.1",
-        "phpunit/phpunit": "^5.0"
+        "phpunit/phpunit": "^5.0",
+        "passwordlib/passwordlib": "^1.0@beta"
     },
     "suggest": {
         "nelmio/alice": "In order that this extension works."
